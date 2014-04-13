@@ -5,6 +5,7 @@ import java.util.*;
 public class Board {
 	private Piece[][] b;
 	private BrianReader reader;
+	private byte wKingR, wKingF, bKingR, bKingF;
 	
 	//Constructor for creating clones
 	public Board(Piece[][] bd) {
@@ -34,6 +35,15 @@ public class Board {
 				
 				else if (bd[r][c] instanceof King) {
 					b[r][c] = new King(bd[r][c].getSide(), r, c, ((King) bd[r][c]).getCKS(), ((King) bd[r][c]).getCQS());
+					if (bd[r][c].getSide()) {
+						wKingR = r;
+						wKingF = c;
+					}
+
+					else {
+						bKingR = r;
+						bKingF = c;
+					}
 				}
 				
 				else {
@@ -56,7 +66,9 @@ public class Board {
 		b[0][5] = new Bishop(true, (byte) 0, (byte) 5);
 		b[0][6] = new Knight(true, (byte) 0, (byte) 6);
 		b[0][7] = new Rook(true, (byte) 0, (byte) 7);
-		
+		wKingR = (byte) 0;
+		wKingF = (byte) 4;
+
 		for (byte i = 0; i < b[1].length; i++) {
 			b[1][i] = new Pawn(true, (byte) 1, i);
 		}
@@ -69,7 +81,8 @@ public class Board {
 		b[7][5] = new Bishop(false, (byte) 7, (byte) 5);
 		b[7][6] = new Knight(false, (byte) 7, (byte) 6);
 		b[7][7] = new Rook(false, (byte) 7, (byte) 7);
-		
+		bKingR = (byte) 7;
+		bKingF = (byte) 4;
 		for (byte i = 0; i < b[6].length; i++) {
 			b[6][i] = new Pawn(false, (byte) 6, i);
 		}
@@ -122,6 +135,8 @@ public class Board {
 				b[0][3] = tempRook;
 				b[0][2].setPosition((byte) 0, (byte) 2);
 				b[0][3].setPosition((byte) 0, (byte) 3);
+				wKingR = (byte) 0;
+				wKingF = (byte) 2;
 				
 				b[0][0] = tempNull1;
 				b[0][4] = tempNull2;
@@ -140,6 +155,9 @@ public class Board {
 				b[7][3] = tempRook;
 				b[7][2].setPosition((byte) 7, (byte) 2);
 				b[7][3].setPosition((byte) 7, (byte) 3);
+				
+				bKingR = (byte) 7;
+				bKingF = (byte) 2;
 				
 				b[7][0] = tempNull1;
 				b[7][4] = tempNull2;
@@ -170,6 +188,9 @@ public class Board {
 				b[0][6].setPosition((byte) 0, (byte) 6);
 				b[0][5].setPosition((byte) 0, (byte) 5);
 				
+				wKingR = (byte) 0;
+				wKingF = (byte) 6;
+				
 				b[0][7] = tempNull1;
 				b[0][4] = tempNull2;
 				b[0][7].setPosition((byte) 0, (byte) 7);
@@ -188,6 +209,9 @@ public class Board {
 				b[7][5] = tempRook;
 				b[7][6].setPosition((byte) 7, (byte) 6);
 				b[7][5].setPosition((byte) 7, (byte) 5);
+				
+				bKingR = (byte) 7;
+				bKingF = (byte) 6;
 				
 				b[7][7] = tempNull1;
 				b[7][4] = tempNull2;
@@ -280,6 +304,16 @@ public class Board {
 		
 		if (b[fR][fC] instanceof King) {
 			((King) b[fR][fC]).cantC(0);
+			
+			if (b[fR][fC].getSide()) {
+				wKingR = (byte) tR;
+				wKingF = (byte) tC;
+			}
+			
+			else {
+				bKingR = (byte) tR;
+				bKingF = (byte) tC;
+			}
 		}
 		
 		if (b[fR][fC] instanceof Rook) {
@@ -503,7 +537,7 @@ public class Board {
 	}
 	
 	private King getKing(boolean si) {
-		for (byte r = 0; r < b.length; r++) {
+/*	for (byte r = 0; r < b.length; r++) {
 			for (byte c = 0; c < b[r].length; c++) {
 				if (b[r][c] instanceof King && b[r][c].getSide() == si) {
 					return (King) b[r][c];
@@ -511,8 +545,17 @@ public class Board {
 			}
 		}
 		
-		return null;
+		return null; */
+		
+		if (si) {
+			return (King) b[wKingR][wKingF];
+		}
+		
+		else {
+			return (King) b[bKingR][bKingF];
+		}
 	}
+
 	
 	public boolean isLegalMove(Boolean si, String s) {
 		s = s.replace("+", "");
