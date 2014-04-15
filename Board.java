@@ -1,6 +1,8 @@
 //Brian Pomerantz
 
 import java.util.*;
+import mpi.*;
+
 
 public class Board {
 	private Piece[][] b;
@@ -502,11 +504,35 @@ public class Board {
 	
 	//Updates move lists of pieces
 	public void update() {
-		for (byte r = 0; r < b.length; r++) {
-			for (byte c = 0; c < b[r].length; c++) {
-				b[r][c].update(this);
+		String[] args = new String[0];
+		MPI.Init(args);
+		int rank = MPI.COMM_WORLD.Rank(), size = MPI.COMM_WORLD.Size();
+		int tag = 100, master = 0;
+		
+		if (rank==master) {
+			int[] sendbuf = new int[size];
+			
+			for (int i = 1; i < size; i++) {
+				MPI.COMM_WORLD.Send(sendbuf, (i-1), 0, MPI.INT, i, tag);
+			}
+	
+			for (int i = 1; i < size; i++) {
+				MPI.COMM_WORLD.Recv(sendbuf, (i-1), 0, MPI.INT, i, tag);
 			}
 		}
+		
+		else {
+			int[] recvbuf = int[0];
+			MPI.COMM_WORLD.Recv(recvbuf, 0, 0, MPI.INT, master, tag);
+			
+			for (int i = 0; i < 64; i+=size) {
+				b[i/8][i%8].update();
+			}
+		
+			MPI.COMM_WORLD.Send(recvbuf, 0, 0, MPI.INT, master, tag);
+		}
+		
+		MPI.Finalize();
 	}
 	
 	//Calculates score of current position
