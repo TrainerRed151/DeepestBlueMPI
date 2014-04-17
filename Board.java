@@ -526,7 +526,7 @@ public class Board {
 			MPI.COMM_WORLD.Recv(recvbuf, 0, 0, MPI.INT, master, tag);
 			
 			for (int i = 0; i < 64; i+=size) {
-				b[i/8][i%8].update();
+				b[i/8][i%8].update(this);
 			}
 		
 			MPI.COMM_WORLD.Send(recvbuf, 0, 0, MPI.INT, master, tag);
