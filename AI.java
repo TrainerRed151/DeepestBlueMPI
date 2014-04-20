@@ -35,45 +35,43 @@ public class AI {
 		
 		
 		MPI.Init(args);
-		int rank = MPI.COMM_WORLD.Rank(), size = MPI.COMM_WORLD.Size();
-		int unitSize=1, tag=100, master=0;
+		byte rank = (byte) MPI.COMM_WORLD.Rank(), size = (byte) MPI.COMM_WORLD.Size();
+		byte unitSize=1, tag=100, master=0;
 		
 		if (rank == master) {
-			int[] sendbuf = new int[unitSize*(size-1)];
+			byte[] sendbuf = new byte[unitSize*(size-1)];
 			
-			for (int i = 1; i < size; i++) {
+			for (byte i = 1; i < size; i++) {
 				MPI.COMM_WORLD.Send(sendbuf, (i-1)*unitSize, unitSize, MPI.INT, i, tag);
 			}
 			
-			for (int i = 1; i < size; i++) {
+			for (byte i = 1; i < size; i++) {
 				MPI.COMM_WORLD.Recv(sendbuf, (i-1)*unitSize, unitSize, MPI.INT, i, tag);
 			}
 			
-			for (int i = 1; i < sendbuf.length; i++){
+			for (byte i = 1; i < sendbuf.length; i++){
    			
-   			if (side && sendbuf[i] > sendbuf[maxIndex]){
-   				best = i+j;
-   				bestVal = sendbuf[i];
-   				alpha = (byte) Math.max(alpha, bestVal);
-  			}
+  	 			if (side && sendbuf[i] > bestVal){
+   					best = (byte) (i+j);
+   					bestVal = sendbuf[i];
+   					alpha = (byte) Math.max(alpha, bestVal);
+  				}
   			
-  			if (!side && sendbuf[i] < sendbuf[maxIndex]){
-   				best = i+j;
-   				bestVal = sendbuf[i];
-   				beta = (byte) Math.min(beta, bestVal);
-  			}
+  				if (!side && sendbuf[i] < bestVal){
+   					best = (byte) (i+j);
+   					bestVal = sendbuf[i];
+   					beta = (byte) Math.min(beta, bestVal);
+  				}
   			
-  			if (beta <= alpha) {
-	    			break;
-	    	}
-  		}
-  		
-  		
+  				if (beta <= alpha) {
+	    				break;
+	    		}
+  			}	
   		
 		}
 		
 		else {
-			int[] recvbuf[] = new int[unitSize];
+			byte[] recvbuf = new byte[unitSize];
 			MPI.COMM_WORLD.Recv(recvbuf, 0, unitSize, MPI.INT, master, tag);
 			
 			Board nBD = new Board(bd.getBoard());
