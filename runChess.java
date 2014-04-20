@@ -29,7 +29,7 @@ public class runChess {
 			boolean aiT = fenIn.charAt(0) == 'W';
 			bd = Board.fen(fenIn.substring(2));
 			
-			ai = new AI(aiT, depth);
+			ai = new AI(aiT, depth, args);
 			
 			cls();
 			bd.display();
@@ -66,7 +66,7 @@ public class runChess {
 			
 			//Test 1 - Mate in 2
 			bd = Board.fen("r5k1/pp3ppp/6q1/3r4/4Q3/8/PPP2PPP/4R1K1 0000");
-			ai = new AI(true, 3);
+			ai = new AI(true, 3, args);
 			
 			startTime = System.nanoTime();
 			m = ai.move(bd);
@@ -83,7 +83,7 @@ public class runChess {
 			
 			//Test 2 - Avoid mate in 1
 			bd = Board.fen("8/1p4kN/p7/2r5/8/RP5b/5P1P/7K 0000");
-			ai = new AI(true, 3);
+			ai = new AI(true, 3, args);
 			
 			startTime = System.nanoTime();
 			m = ai.move(bd);
@@ -99,7 +99,7 @@ public class runChess {
 			}
 			
 			//Test 3 - Mate in 1 (from Test 2)
-			ai = new AI(false, 3);
+			ai = new AI(false, 3, args);
 			
 			startTime = System.nanoTime();
 			m = ai.move(bd);
@@ -116,7 +116,7 @@ public class runChess {
 			
 			//Test 4 - Stalemate
 			bd = Board.fen("k7/8/1QK5/8/8/8/8/8 0000");
-			ai = new AI(false, 3);
+			ai = new AI(false, 3, args);
 			
 			startTime = System.nanoTime();
 			m = ai.move(bd);
@@ -133,7 +133,7 @@ public class runChess {
 			
 			//Test 5 - Difficult mate in 3
 			bd = Board.fen("B7/8/3p1R2/2pR4/1p2kB2/8/1p1K4/qN5b 0000");
-			ai = new AI(true, 5);
+			ai = new AI(true, 5, args);
 			
 			startTime = System.nanoTime();
 			m = ai.move(bd);
@@ -150,7 +150,7 @@ public class runChess {
 			
 			//Test 6 - Difficult mate in 3
 			bd = Board.fen("8/8/8/6K1/4N3/6N1/5RP1/6k1 0000");
-			ai = new AI(true, 5);
+			ai = new AI(true, 5, args);
 			
 			startTime = System.nanoTime();
 			m = ai.move(bd);
@@ -167,7 +167,7 @@ public class runChess {
 			
 			//Test 7 - Resignation
 			bd = Board.fen("8/8/8/6K1/4N3/6N1/4R1P1/6k1 0000");
-			ai = new AI(false, 4);
+			ai = new AI(false, 4, args);
 			
 			startTime = System.nanoTime();
 			m = ai.move(bd);
@@ -183,7 +183,7 @@ public class runChess {
 			}
 			
 			bd = Board.fen("5q2/8/8/5k2/8/8/6PP/4K2R 1000");
-			ai = new AI(true, 4);
+			ai = new AI(true, 4, args);
 			
 			//Test 8 - Castling & Check
 			startTime = System.nanoTime();
@@ -200,7 +200,7 @@ public class runChess {
 			}
 			
 			bd = Board.fen("8/8/8/8/8/5k2/5p1K/8 0000");
-			ai = new AI(false, 3);
+			ai = new AI(false, 3, args);
 			
 			//Test 9 - Promotion & Stalemate
 			startTime = System.nanoTime();
@@ -218,7 +218,7 @@ public class runChess {
 			
 			//Test 10 - Opening move
 			bd = Board.fen("rnbqknbr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKNBR 1111");
-			ai = new AI(true, 6);
+			ai = new AI(true, 6, args);
 			
 			startTime = System.nanoTime();
 			m = ai.move(bd);
@@ -240,8 +240,8 @@ public class runChess {
 			ps.println("Depth: " + depth);
 			
 			bd = new Board();
-			AI white = new AI(true, depth);
-			AI black = new AI(false, depth);
+			AI white = new AI(true, depth, args);
+			AI black = new AI(false, depth, args);
 			
 			int i = 1;
 			double time;

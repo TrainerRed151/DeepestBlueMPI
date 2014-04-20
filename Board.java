@@ -504,6 +504,9 @@ public class Board {
 	
 	//Updates move lists of pieces
 	public void update() {
+
+
+/*
 		String[] args = new String[0];
 		MPI.Init(args);
 		int rank = MPI.COMM_WORLD.Rank(), size = MPI.COMM_WORLD.Size();
@@ -533,6 +536,15 @@ public class Board {
 		}
 		
 		MPI.Finalize();
+		
+*/
+
+
+		for (byte r = 0; r < b.length; r++) {
+			for (byte c = 0; c < b[r].length; c++) {
+				b[r][c].update(this);
+			}
+		}
 	}
 	
 	//Calculates score of current position

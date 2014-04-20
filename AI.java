@@ -5,10 +5,12 @@ import java.util.*;
 public class AI {
 	private boolean side;
 	private int depth;
+	private String[] args;
 	
-	public AI(boolean si, int dep) {
+	public AI(boolean si, int dep, String[] as) {
 		side = si;
 		depth = dep;
+		args = as;
 	}
 	
 	//Calculates the best move using a MinMax algorithm with ALphaBeta Pruning
@@ -28,27 +30,59 @@ public class AI {
 		if (side) {bestVal = Byte.MIN_VALUE;}
 		else {bestVal = Byte.MAX_VALUE;}
 		
-		for (byte i = 0; i < moves.size(); i++) {
-			Board nBD = new Board(bd.getBoard());
-			val = alphabeta(nBD.move(moves.get(i), side), depth, alpha, beta, !side);
-			//System.out.println(moves.get(i) + ": " + val);
+		int j = 0; //make for loop
+		
+		
+		MPI.Init(args);
+		int rank = MPI.COMM_WORLD.Rank(), size = MPI.COMM_WORLD.Size();
+		int unitSize=1, tag=100, master=0;
+		
+		if (rank == master) {
+			int[] sendbuf = new int[unitSize*(size-1)];
 			
-			if (side && val > bestVal) {
-				bestVal = val;
-				best = i;
-				alpha = (byte) Math.max(alpha, val);
+			for (int i = 1; i < size; i++) {
+				MPI.COMM_WORLD.Send(sendbuf, (i-1)*unitSize, unitSize, MPI.INT, i, tag);
 			}
 			
-			if (!side && val < bestVal) {
-				bestVal = val;
-				best = i;
-				beta = (byte) Math.min(beta, val);
+			for (int i = 1; i < size; i++) {
+				MPI.COMM_WORLD.Recv(sendbuf, (i-1)*unitSize, unitSize, MPI.INT, i, tag);
 			}
 			
-			if (beta <= alpha) {
-    			break;
-    		}
+			for (int i = 1; i < sendbuf.length; i++){
+   			
+   			if (side && sendbuf[i] > sendbuf[maxIndex]){
+   				best = i+j;
+   				bestVal = sendbuf[i];
+   				alpha = (byte) Math.max(alpha, bestVal);
+  			}
+  			
+  			if (!side && sendbuf[i] < sendbuf[maxIndex]){
+   				best = i+j;
+   				bestVal = sendbuf[i];
+   				beta = (byte) Math.min(beta, bestVal);
+  			}
+  			
+  			if (beta <= alpha) {
+	    			break;
+	    	}
+  		}
+  		
+  		
+  		
 		}
+		
+		else {
+			int[] recvbuf[] = new int[unitSize];
+			MPI.COMM_WORLD.Recv(recvbuf, 0, unitSize, MPI.INT, master, tag);
+			
+			Board nBD = new Board(bd.getBoard());
+			recvbuf[0] = alphabeta(nBD.move(moves.get(j+rank), side), depth, alpha, beta, !side);
+			
+			MPI.COMM_WORLD.Recv(recvbuf, 0, unitSize, MPI.INT, master, tag);
+		}
+		
+		MPI.Finalize();
+		
 		
 		//Resign if opponent has forced mate within depth
 		//Alternatively, the engine could chose a random move
