@@ -1,6 +1,7 @@
 //Brian Pomerantz
 
 import java.util.*;
+import mpi.*;
 
 public class AI {
 	private boolean side;

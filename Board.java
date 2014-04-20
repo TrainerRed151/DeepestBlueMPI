@@ -1,7 +1,7 @@
 //Brian Pomerantz
 
 import java.util.*;
-import mpi.*;
+//import mpi.*;
 
 
 public class Board {
